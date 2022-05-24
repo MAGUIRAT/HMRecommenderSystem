@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  airflow_db:
+    image: mysql:5.7
+    env_file:
+      - .env
+    volumes:
+      - airflow_db_data:/var/lib/mysql
+    networks:
+      - database_network
+    ports:
+      - ${AIRFLOW_DATABASE_HOST_PORT}:3306
+    restart: always
+    container_name: airflow_db
+
+  airflow_webserver:
+    image: apache/airflow:2.3.0
+    entrypoint: [ "bash", "${AIRFLOW_HOME}/entrypoints/webserver.sh" ]
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=mysql+mysqldb://${MYSQL_USER}:${MYSQL_PASSWORD}@airflow_db/${MYSQL_DATABASE}
+    volumes:
+      - ./workflow/dags:${AIRFLOW_HOME}/dags
+      - ./workflow/entrypoints:${AIRFLOW_HOME}/entrypoints
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - database_network
+      - pipeline_network
+    ports:
+      - ${AIRFLOW_WBESERVER_HOST_PORT}:8080
+
+    depends_on:
+      - airflow_db
+      - recsys_pipeline
+
+    restart: always
+    container_name: airflow_webserver
+
+  recsys_pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - pipeline_network
+    volumes:
+      - ${DATA_DIRECTORY}:/HMRecommenderSystem/data
+      - ${MODELS_DIRECTORY}:/HMRecommenderSystem/models
+    container_name: recsys_pipeline
+
+
+volumes:
+  airflow_db_data:
+
+networks:
+  database_network:
+    driver: bridge
+
+  pipeline_network:
+    driver: bridge
+
