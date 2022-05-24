@@ -29,7 +29,7 @@ future. For computational resources considerations, I opted for a non-personaliz
 that the candidates are the same for all the customers regardless of their previous purchases. These candidates are
 obtained by retrieving the top-N trending articles during the last two weeks preceding the competition evaluation week.
 Each (customer, articles) pair in the candidates' data set is embedded using articles and customers features (dynamic &
-static) as well as a set of additional features linking a given customer to its candidate. An example of these features
+static) as well as a set of additional features relating a given customer to its candidate. An example of these features
 would be the number of products having the same type of the candidates and purchased by the customer.
 
 ## 1.4. Model Training & Validation
