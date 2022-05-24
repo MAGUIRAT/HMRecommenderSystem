@@ -13,7 +13,7 @@ The current project workflow is divided into multiple stages.
 ## 1.1 Data Preprocessing & Partitioning
 
 This step includes enforcing data frames data types, dealing with missing values, and converting raw csv files to
-parquet. The resultant parquet files are partitioned by customer or by articles groups to be able to load and process
+parquet. The resultant parquet files are partitioned either by customer or by articles groups to allow loading and processing
 smaller chunks of data in a parallel fashion during the following pipeline steps.
 
 ## 1.2 Features Generation
